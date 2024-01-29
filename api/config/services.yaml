@@ -22,9 +22,9 @@ services:
             - '../src/Entity/'
             - '../src/Kernel.php'
 
-#    App\Action\:
-#        resource: '../src/Action/'
-#        tags: [ 'controller.service_arguments' ]
+    App\Action\:
+        resource: '../src/Action/'
+        tags: [ 'controller.service_arguments' ]
 #
 #    App\Security\Voter\:
 #        resource: '../src/Security/Voter/'

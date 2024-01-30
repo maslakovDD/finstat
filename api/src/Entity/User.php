@@ -17,11 +17,6 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[
     ApiResource(
         collectionOperations: [
-            "get"  => [
-                "method"                => "GET",
-                "normalization_context" => ['groups' => ["get:collection:user"]],
-                "security"              => "is_granted('PUBLIC_ACCESS')"
-            ],
             "post" => [
                 "method"                  => "POST",
                 "denormalization_context" => ['groups' => ['post:collection:user']],
@@ -31,11 +26,20 @@ use Symfony\Component\Serializer\Annotation\Groups;
             ]
         ],
         itemOperations: [
-            "get" => [
+            "get"    => [
                 "method"                => "GET",
                 "normalization_context" => ['groups' => ['get:item:user']],
-                "security"              => "is_granted('PUBLIC_ACCESS')"
-
+                "security"              => "is_granted('IS_USER_OWNER_CHECK', object)"
+            ],
+            "patch"  => [
+                "method"                  => "PATCH",
+                "denormalization_context" => ['groups' => ["patch:item:user"]],
+                "normalization_context"   => ['groups' => ['get:item:user']],
+                "security"                => "is_granted('IS_USER_OWNER_CHECK', object)"
+            ],
+            "delete" => [
+                "method"   => "DELETE",
+                "security" => "is_granted('IS_USER_OWNER_CHECK', object)"
             ]
         ]
     )
@@ -62,7 +66,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     #[ORM\Column(length: 255)]
     #[Groups([
-        "get:collection:user",
         "get:item:user",
         "post:collection:user"
     ])]
@@ -93,7 +96,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     #[ORM\Column(length: 45)]
     #[Groups([
-        "get:collection:user",
         "get:item:user",
         "post:collection:user"
     ])]
@@ -104,7 +106,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     #[ORM\Column(length: 45)]
     #[Groups([
-        "get:collection:user",
         "get:item:user",
         "post:collection:user"
     ])]

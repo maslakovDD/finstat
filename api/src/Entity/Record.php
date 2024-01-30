@@ -2,10 +2,41 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\RecordRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
+#[
+    ApiResource(
+        collectionOperations: [
+            "get"  => [
+                "method" => "GET",
+                "normalization_context" => ['groups' => ['get:collection:record']]
+            ],
+            "post" => [
+                "method"                  => "POST",
+                "denormalization_context" => ['groups' => ['post:collection:record']],
+                "normalization_context"   => ["groups" => ["get:item:record"]],
+            ]
+        ],
+        itemOperations: [
+            "get"    => [
+                "method"                => "GET",
+                "normalization_context" => ['groups' => ['get:item:record']],
+            ],
+            "patch"  => [
+                "method"                  => "PATCH",
+                "denormalization_context" => ['groups' => ["patch:item:record"]],
+                "normalization_context"   => ['groups' => ['get:item:record']],
+            ],
+            "delete" => [
+                "method"   => "DELETE",
+            ]
+        ]
+    )
+]
 #[ORM\Entity(repositoryClass: RecordRepository::class)]
 class Record
 {
@@ -16,30 +47,57 @@ class Record
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups([
+        "get:item:record",
+        "get:collection:record"
+    ])]
     private ?int $id = null;
 
     /**
      * @var string|null
      */
     #[ORM\Column(length: 255)]
+    #[Groups([
+        "get:item:record",
+        "get:collection:record",
+        "post:collection:record",
+        "patch:item:record"
+    ])]
     private ?string $title = null;
 
     /**
      * @var string|null
      */
     #[ORM\Column(type: Types::TEXT, nullable: true)]
+    #[Groups([
+        "get:item:record",
+        "get:collection:record",
+        "post:collection:record",
+        "patch:item:record"
+    ])]
     private ?string $description = null;
 
     /**
      * @var string|null
      */
     #[ORM\Column(type: Types::DECIMAL, precision: 5, scale: 2)]
+    #[Groups([
+        "get:item:record",
+        "get:collection:record",
+        "post:collection:record",
+        "patch:item:record"
+    ])]
     private ?string $sum = null;
 
     /**
      * @var string|null
      */
     #[ORM\Column(type: Types::BIGINT, nullable: true)]
+    #[Groups([
+        "get:item:record",
+        "get:collection:record",
+        "post:collection:record"
+    ])]
     private ?string $createdDate = null;
 
     /**
@@ -47,6 +105,12 @@ class Record
      */
     #[ORM\ManyToOne(inversedBy: 'records')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups([
+        "get:item:record",
+        "get:collection:record",
+        "post:collection:record",
+        "patch:item:record"
+    ])]
     private ?Category $category = null;
 
     /**

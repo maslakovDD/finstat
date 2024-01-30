@@ -5,6 +5,8 @@ namespace App\Entity;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Action\CreateUserAction;
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -107,6 +109,27 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         "post:collection:user"
     ])]
     private ?string $lastName = null;
+
+    /**
+     * @var Collection
+     */
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Balance::class)]
+    private Collection $balances;
+
+    /**
+     * @var Collection
+     */
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Category::class)]
+    private Collection $categories;
+
+    /**
+     * User constructor
+     */
+    public function __construct()
+    {
+        $this->balances = new ArrayCollection();
+        $this->categories = new ArrayCollection();
+    }
 
     /**
      * @return int|null
@@ -265,6 +288,82 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function eraseCredentials(): void
     {
         $this->plainPassword = null;
+    }
+
+    /**
+     * @return Collection<int, Balance>
+     */
+    public function getBalances(): Collection
+    {
+        return $this->balances;
+    }
+
+    /**
+     * @param Balance $balance
+     * @return $this
+     */
+    public function addBalance(Balance $balance): self
+    {
+        if (!$this->balances->contains($balance)) {
+            $this->balances->add($balance);
+            $balance->setUser($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param Balance $balance
+     * @return $this
+     */
+    public function removeBalance(Balance $balance): self
+    {
+        if ($this->balances->removeElement($balance)) {
+            // set the owning side to null (unless already changed)
+            if ($balance->getUser() === $this) {
+                $balance->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Category>
+     */
+    public function getCategories(): Collection
+    {
+        return $this->categories;
+    }
+
+    /**
+     * @param Category $category
+     * @return $this
+     */
+    public function addCategory(Category $category): self
+    {
+        if (!$this->categories->contains($category)) {
+            $this->categories->add($category);
+            $category->setUser($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param Category $category
+     * @return $this
+     */
+    public function removeCategory(Category $category): self
+    {
+        if ($this->categories->removeElement($category)) {
+            // set the owning side to null (unless already changed)
+            if ($category->getUser() === $this) {
+                $category->setUser(null);
+            }
+        }
+
+        return $this;
     }
 
 }

@@ -2,12 +2,43 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\CurrencyRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
+#[
+    ApiResource(
+        collectionOperations: [
+            "get"  => [
+                "method" => "GET",
+                "normalization_context" => ['groups' => ['get:collection:currency']]
+            ],
+            "post" => [
+                "method"                  => "POST",
+                "denormalization_context" => ['groups' => ['post:collection:currency']],
+                "normalization_context"   => ["groups" => ["get:item:currency"]],
+            ]
+        ],
+        itemOperations: [
+            "get"    => [
+                "method"                => "GET",
+                "normalization_context" => ['groups' => ['get:item:currency']],
+            ],
+            "patch"  => [
+                "method"                  => "PATCH",
+                "denormalization_context" => ['groups' => ["patch:item:currency"]],
+                "normalization_context"   => ['groups' => ['get:item:currency']],
+            ],
+            "delete" => [
+                "method"   => "DELETE",
+            ]
+        ]
+    )
+]
 #[ORM\Entity(repositoryClass: CurrencyRepository::class)]
 class Currency
 {
@@ -18,18 +49,34 @@ class Currency
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups([
+        "get:item:currency",
+        "get:collection:currency"
+    ])]
     private ?int $id = null;
 
     /**
      * @var string|null
      */
     #[ORM\Column(length: 255)]
+    #[Groups([
+        "get:item:currency",
+        "get:collection:currency",
+        "post:collection:currency",
+        "patch:item:currency"
+    ])]
     private ?string $title = null;
 
     /**
      * @var string|null
      */
     #[ORM\Column(type: Types::DECIMAL, precision: 5, scale: 4)]
+    #[Groups([
+        "get:item:currency",
+        "get:collection:currency",
+        "post:collection:currency",
+        "patch:item:currency"
+    ])]
     private ?string $dollarCoef = null;
 
     /**

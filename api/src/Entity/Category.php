@@ -22,7 +22,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
                 "method"                  => "POST",
                 "denormalization_context" => ['groups' => ['post:collection:category']],
                 "normalization_context"   => ["groups" => ["get:item:category"]],
-                "security"                => "is_granted('PUBLIC_ACCESS')",
+                "security"                => "is_granted('".User::ROLE_USER."')",
             ]
         ],
         itemOperations: [
@@ -89,7 +89,6 @@ class Category
     #[Groups([
         "get:item:category",
         "get:collection:category",
-        "post:collection:category"
     ])]
     private ?User $user = null;
 

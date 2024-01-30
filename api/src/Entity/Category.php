@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\CategoryRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -36,6 +38,20 @@ class Category
     #[ORM\ManyToOne(inversedBy: 'categories')]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
+
+    /**
+     * @var Collection
+     */
+    #[ORM\OneToMany(mappedBy: 'category', targetEntity: Record::class)]
+    private Collection $records;
+
+    /**
+     * Category constructor
+     */
+    public function __construct()
+    {
+        $this->records = new ArrayCollection();
+    }
 
     /**
      * @return int|null
@@ -98,6 +114,44 @@ class Category
     public function setUser(?User $user): self
     {
         $this->user = $user;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Record>
+     */
+    public function getRecords(): Collection
+    {
+        return $this->records;
+    }
+
+    /**
+     * @param Record $record
+     * @return $this
+     */
+    public function addRecord(Record $record): self
+    {
+        if (!$this->records->contains($record)) {
+            $this->records->add($record);
+            $record->setCategory($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param Record $record
+     * @return $this
+     */
+    public function removeRecord(Record $record): self
+    {
+        if ($this->records->removeElement($record)) {
+            // set the owning side to null (unless already changed)
+            if ($record->getCategory() === $this) {
+                $record->setCategory(null);
+            }
+        }
 
         return $this;
     }

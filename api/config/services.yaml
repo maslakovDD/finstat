@@ -25,9 +25,9 @@ services:
     App\Action\:
         resource: '../src/Action/'
         tags: [ 'controller.service_arguments' ]
-#
-#    App\Security\Voter\:
-#        resource: '../src/Security/Voter/'
-#        tags: [ 'security.voter' ]
+
+    App\Security\Voter\:
+        resource: '../src/Security/Voter/'
+        tags: [ 'security.voter' ]
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

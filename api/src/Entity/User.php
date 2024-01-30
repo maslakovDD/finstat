@@ -56,7 +56,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\GeneratedValue]
     #[ORM\Column]
     #[Groups([
-        "get:collection:user",
         "get:item:user",
     ])]
     private ?int $id = null;
@@ -67,7 +66,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255)]
     #[Groups([
         "get:item:user",
-        "post:collection:user"
+        "post:collection:user",
+        "patch:item:user",
     ])]
     private ?string $email = null;
 
@@ -81,7 +81,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @var string|null
      */
     #[Groups([
-        "post:collection:user"
+        "post:collection:user",
+        "patch:item:user",
     ])]
     private ?string $plainPassword = null;
 
@@ -97,7 +98,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 45)]
     #[Groups([
         "get:item:user",
-        "post:collection:user"
+        "post:collection:user",
+        "patch:item:user",
     ])]
     private ?string $firstName = null;
 
@@ -107,7 +109,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 45)]
     #[Groups([
         "get:item:user",
-        "post:collection:user"
+        "post:collection:user",
+        "patch:item:user",
     ])]
     private ?string $lastName = null;
 

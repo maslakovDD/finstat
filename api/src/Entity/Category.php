@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
+use App\Action\CreateCategoryAction;
 use App\Repository\CategoryRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -15,14 +16,15 @@ use Symfony\Component\Serializer\Annotation\Groups;
     ApiResource(
         collectionOperations: [
             "get"  => [
-                "method" => "GET",
+                "method"                => "GET",
                 "normalization_context" => ['groups' => ['get:collection:category']]
             ],
             "post" => [
                 "method"                  => "POST",
                 "denormalization_context" => ['groups' => ['post:collection:category']],
                 "normalization_context"   => ["groups" => ["get:item:category"]],
-                "security"                => "is_granted('".User::ROLE_USER."')",
+                "security"                => "is_granted('" . User::ROLE_USER . "')",
+                "controller"              => CreateCategoryAction::class
             ]
         ],
         itemOperations: [
@@ -36,7 +38,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
                 "normalization_context"   => ['groups' => ['get:item:category']],
             ],
             "delete" => [
-                "method"   => "DELETE",
+                "method" => "DELETE",
             ]
         ]
     )

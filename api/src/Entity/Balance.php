@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
+use App\Action\CreateBalanceAction;
 use App\Repository\BalanceRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
@@ -12,13 +13,14 @@ use Symfony\Component\Serializer\Annotation\Groups;
     ApiResource(
         collectionOperations: [
             "get"  => [
-                "method" => "GET",
+                "method"                => "GET",
                 "normalization_context" => ['groups' => ['get:collection:balance']]
             ],
             "post" => [
                 "method"                  => "POST",
                 "denormalization_context" => ['groups' => ['post:collection:balance']],
                 "normalization_context"   => ["groups" => ["get:item:balance"]],
+                "controller"              => CreateBalanceAction::class
             ]
         ],
         itemOperations: [
@@ -32,7 +34,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
                 "normalization_context"   => ['groups' => ['get:item:balance']],
             ],
             "delete" => [
-                "method"   => "DELETE",
+                "method" => "DELETE",
             ]
         ]
     )
@@ -85,7 +87,6 @@ class Balance
     #[Groups([
         "get:item:balance",
         "get:collection:balance",
-        "post:collection:balance",
         "patch:item:balance"
     ])]
     private ?Currency $currency = null;

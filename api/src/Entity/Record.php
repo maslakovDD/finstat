@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
+use App\Action\CreateRecordAction;
 use App\Repository\RecordRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
@@ -12,13 +13,15 @@ use Symfony\Component\Serializer\Annotation\Groups;
     ApiResource(
         collectionOperations: [
             "get"  => [
-                "method" => "GET",
+                "method"                => "GET",
                 "normalization_context" => ['groups' => ['get:collection:record']]
             ],
             "post" => [
                 "method"                  => "POST",
                 "denormalization_context" => ['groups' => ['post:collection:record']],
                 "normalization_context"   => ["groups" => ["get:item:record"]],
+                "security"                => "is_granted('" . User::ROLE_USER . "')",
+                "controller"              => CreateRecordAction::class
             ]
         ],
         itemOperations: [
@@ -32,7 +35,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
                 "normalization_context"   => ['groups' => ['get:item:record']],
             ],
             "delete" => [
-                "method"   => "DELETE",
+                "method" => "DELETE",
             ]
         ]
     )
@@ -96,7 +99,6 @@ class Record
     #[Groups([
         "get:item:record",
         "get:collection:record",
-        "post:collection:record"
     ])]
     private ?string $createdDate = null;
 
@@ -215,4 +217,5 @@ class Record
 
         return $this;
     }
+
 }
